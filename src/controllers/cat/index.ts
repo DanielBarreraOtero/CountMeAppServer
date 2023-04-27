@@ -8,7 +8,7 @@ import GetCat from '../../modules/cat/application/get-one'
 
 export const getCats = async (req: Request, res: Response) => {
   // Validate request
-  var mongo = new MongoConnector()
+  const mongo = new MongoConnector()
   await mongo.init()
 
   // Get cats
@@ -22,7 +22,7 @@ export const getCats = async (req: Request, res: Response) => {
 
 export const getCat = async (req: Request, res: Response) => {
   // Validate request
-  var mongo = new MongoConnector()
+  const mongo = new MongoConnector()
   await mongo.init()
 
   // Get cat
@@ -40,11 +40,16 @@ export const getCat = async (req: Request, res: Response) => {
 }
 
 export const saveNewCat = async (req: Request, res: Response) => {
-  var mongo = new MongoConnector()
+  const mongo = new MongoConnector()
   await mongo.init()
 
-  var catReq = req.body.cat
-  var cat = new Cat(catReq.name, catReq.color, catReq.birthDate, catReq.weight)
+  const catReq = req.body.cat
+  const cat = new Cat(
+    catReq.name,
+    catReq.color,
+    catReq.birthDate,
+    catReq.weight,
+  )
 
   const catBD = await new SaveCat().execute(cat)
 
@@ -54,11 +59,11 @@ export const saveNewCat = async (req: Request, res: Response) => {
 }
 
 export const saveExistingCat = async (req: Request, res: Response) => {
-  var mongo = new MongoConnector()
+  const mongo = new MongoConnector()
   await mongo.init()
 
-  var catReq = req.body.cat
-  var cat = new Cat(
+  const catReq = req.body.cat
+  const cat = new Cat(
     catReq.name,
     catReq.color,
     catReq.birthDate,
@@ -74,10 +79,10 @@ export const saveExistingCat = async (req: Request, res: Response) => {
 }
 
 export const deleteCat = async (req: Request, res: Response) => {
-  var mongo = new MongoConnector()
+  const mongo = new MongoConnector()
   await mongo.init()
 
-  var result = await new DeleteCat().execute(req.body.id)
+  const result = await new DeleteCat().execute(req.body.id)
 
   await mongo.close()
 

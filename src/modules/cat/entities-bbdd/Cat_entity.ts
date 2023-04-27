@@ -5,7 +5,7 @@ interface ICat {
   name: string
   color: string
   birthDate: Date
-  weight: number,
+  weight: number
   relatives: Types.Array<Types.ObjectId>
 }
 
@@ -15,18 +15,18 @@ interface ICatMethods {
 
 type CatModel = Model<ICat, {}, ICatMethods>
 
-var catSchema = new Schema<ICat, CatModel, ICatMethods>({
+const catSchema = new Schema<ICat, CatModel, ICatMethods>({
   name: { type: String },
   color: { type: String },
   birthDate: Date,
   weight: Number,
-  relatives: [{ type: Schema.Types.ObjectId, ref: 'CatModel' }]
+  relatives: [{ type: Schema.Types.ObjectId, ref: 'CatModel' }],
 })
 
 catSchema.method('toCatModel', function toCatModel(): Cat {
   return new Cat(this.name, this.color, this.birthDate, this.weight, this._id)
 })
 
-var CatBD = mongoose.model<ICat, CatModel>('cat', catSchema)
+const CatBD = mongoose.model<ICat, CatModel>('cat', catSchema)
 
 export default CatBD
