@@ -5,7 +5,13 @@ export default class Cat {
   private birthDate: Date
   private weight: number
 
-  constructor(name: string, color: string, birthDate: Date, weight: number, _id?: string) {
+  constructor(
+    name: string,
+    color: string,
+    birthDate: Date,
+    weight: number,
+    _id?: string,
+  ) {
     this.setName(name).setColor(color).setBirthDate(birthDate).setWeight(weight)
 
     if (_id) {
