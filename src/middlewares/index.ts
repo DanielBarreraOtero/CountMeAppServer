@@ -1,8 +1,10 @@
 import express, { Express } from 'express'
 import * as fs from 'fs'
-import helmet from 'helmet'
+import helmet, { crossOriginOpenerPolicy } from 'helmet'
 import morgan from 'morgan'
 import compression from 'compression'
+import cookieParser from 'cookie-parser'
+import cors from 'cors'
 
 export default function setMiddlewares(app: Express) {
   // Default HTTP Header configuration
@@ -20,5 +22,15 @@ export default function setMiddlewares(app: Express) {
       }),
     }),
   )
+
+  app.use(
+    cors({
+      origin: 'http://localhost:4200',
+      credentials: true
+    }),
+  )
+
+  // Cookie Access
+  app.use(cookieParser())
   app.use(morgan('dev'))
 }

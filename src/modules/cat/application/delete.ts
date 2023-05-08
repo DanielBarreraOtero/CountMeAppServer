@@ -1,4 +1,3 @@
-import mongoose from 'mongoose'
 import CatBD from '../entities-bbdd/Cat_entity'
 
 export default class DeleteCat {
