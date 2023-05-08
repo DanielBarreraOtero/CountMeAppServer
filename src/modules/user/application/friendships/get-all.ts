@@ -19,6 +19,7 @@ export default class GetAll {
     userFriendshipsEntity.forEach((userFriendship) => {
       usersFriendships.push(userFriendship.toUserRelationshipModel())
     })
+    
 
     return usersFriendships
   }
