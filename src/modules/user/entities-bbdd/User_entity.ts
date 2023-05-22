@@ -25,22 +25,9 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
 userSchema.method('toUserModel', function toUserModel(): User {
   var stringRoles: string[] = []
 
-  console.log(this.roles);
-  
-
   this.roles.forEach((role: any) => {
     stringRoles.push(role.name)
   })
-
-  console.log(
-    new User({
-      id: this._id.toString(),
-      username: this.username,
-      email: this.email,
-      password: this.password,
-      roles: stringRoles,
-    }),
-  )
 
   return new User({
     id: this._id.toString(),

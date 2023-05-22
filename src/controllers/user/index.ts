@@ -4,6 +4,7 @@ import SaveUser from '../../modules/user/application/save'
 import GetUsers from '../../modules/user/application/get-all'
 import GetUser from '../../modules/user/application/get-one'
 import DeleteUser from '../../modules/user/application/delete'
+import GetPending from '../../modules/user/application/friendships/get-pending'
 
 export const getUsers = async (req: Request, res: Response) => {
   // Get users
@@ -18,6 +19,8 @@ export const getUser = async (req: Request, res: Response) => {
 
   // Get user
   const result = await new GetUser().execute(req.params.id)
+
+  console.log(result)
 
   // Send response
   if (result instanceof User) {

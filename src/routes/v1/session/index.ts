@@ -1,16 +1,8 @@
 import express from 'express'
 import { sessionLogIn } from '../../../controllers/session'
-import MongoConnector from '../../../utils/mongo-connector'
-import AuthChecker from '../../../utils/auth-checker'
+import { closeConn, initConn } from '../../../utils/mongo-connector'
 const router = express.Router()
 
-const mongo = new MongoConnector()
-
-router.post(
-  '/login',
-  mongo.initMW(),
-  sessionLogIn,
-  mongo.closeMW(),
-)
+router.post('/login', initConn, sessionLogIn, closeConn)
 
 export default router

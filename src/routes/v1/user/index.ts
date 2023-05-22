@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import MongoConnector from '../../../utils/mongo-connector'
+import { closeConn, initConn } from '../../../utils/mongo-connector'
 
 import {
   deleteUser,
@@ -10,15 +10,13 @@ import {
   saveNewUser,
 } from '../../../controllers/user'
 
-const mongo = new MongoConnector()
+router.get('/', initConn, getUsers, closeConn)
 
-router.get('/', mongo.initMW(), getUsers, mongo.closeMW())
+router.get('/:id', initConn, getUser, closeConn)
 
-router.get('/:id', mongo.initMW(), getUser, mongo.closeMW())
+router.post('/', initConn, saveNewUser, closeConn)
+router.put('/', initConn, saveExistingUser, closeConn)
 
-router.post('/', mongo.initMW(), saveNewUser, mongo.closeMW())
-router.put('/', mongo.initMW(), saveExistingUser, mongo.closeMW())
-
-router.delete('/', mongo.initMW(), deleteUser, mongo.closeMW())
+router.delete('/', initConn, deleteUser, closeConn)
 
 export default router

@@ -5,26 +5,26 @@ import UserEntity from './User_entity'
 
 SchemaTypeOptions
 
-interface IUserRelationship {
+interface IUserFriendship {
   user1: { type: Types.ObjectId; required: true; unique: true }
   user2: { type: Types.ObjectId; required: true; unique: true }
   states: Types.Array<{ state: Types.ObjectId; date: Schema.Types.Date }>
 }
 
-interface IUserRelationshipMethods {
-  toUserRelationshipModel(): UsersFriendship
+interface IUserFriendshipMethods {
+  toUserFriendshipModel(): UsersFriendship
 }
 
-type UserRelationshipModel = Model<
-  IUserRelationship,
+type UserFriendshipModel = Model<
+  IUserFriendship,
   {},
-  IUserRelationshipMethods
+  IUserFriendshipMethods
 >
 
-const userRelationshipSchema = new Schema<
-  IUserRelationship,
-  UserRelationshipModel,
-  IUserRelationshipMethods
+const userFriendshipSchema = new Schema<
+  IUserFriendship,
+  UserFriendshipModel,
+  IUserFriendshipMethods
 >({
   user1: { type: Schema.Types.ObjectId, ref: UserEntity, unique: true },
   user2: { type: Schema.Types.ObjectId, ref: UserEntity, unique: true },
@@ -41,9 +41,9 @@ const userRelationshipSchema = new Schema<
   ],
 })
 
-userRelationshipSchema.method(
-  'toUserRelationshipModel',
-  function toUserRelationshipModel(): UsersFriendship {
+userFriendshipSchema.method(
+  'toUserFriendshipModel',
+  function toUserFriendshipModel(): UsersFriendship {
     var states: State[] = []
 
     this.user1.password = undefined
@@ -62,9 +62,9 @@ userRelationshipSchema.method(
   },
 )
 
-const UserRelationshipEntity = mongoose.model<
-  IUserRelationship,
-  UserRelationshipModel
->('users_friendships', userRelationshipSchema)
+const UserFriendshipEntity = mongoose.model<
+  IUserFriendship,
+  UserFriendshipModel
+>('users_friendships', userFriendshipSchema)
 
-export default UserRelationshipEntity
+export default UserFriendshipEntity

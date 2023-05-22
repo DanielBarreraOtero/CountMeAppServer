@@ -1,11 +1,10 @@
 import express from 'express'
 const router = express.Router()
-import MongoConnector from '../../../utils/mongo-connector'
+import { getAcceptedFriendships, getFriendships, getPendingFriendships } from '../../../controllers/friendships'
+import { closeConn, initConn } from '../../../utils/mongo-connector'
 
-import { getFriendships } from '../../../controllers/friendships'
-
-const mongo = new MongoConnector()
-
-router.get('/', mongo.initMW(), getFriendships, mongo.closeMW())
+router.get('/', initConn, getFriendships, closeConn)
+router.get('/Accepted/:id', initConn, getAcceptedFriendships, closeConn)
+router.get('/Pending/:id', initConn, getPendingFriendships, closeConn)
 
 export default router

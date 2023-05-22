@@ -1,11 +1,11 @@
-import UserRelationshipEntity from '../../entities-bbdd/Users_friendship_entity'
+import UserFriendshipEntity from '../../entities-bbdd/Users_friendship_entity'
 import UsersFriendship from '../../models/Users_friendship'
 
 export default class GetAll {
   async execute(): Promise<UsersFriendship[]> {
     const usersFriendships: UsersFriendship[] = []
 
-    const userFriendshipsEntity = await UserRelationshipEntity.find()
+    const userFriendshipsEntity = await UserFriendshipEntity.find()
       .populate({
         path: 'user1',
       })
@@ -17,9 +17,8 @@ export default class GetAll {
       })
 
     userFriendshipsEntity.forEach((userFriendship) => {
-      usersFriendships.push(userFriendship.toUserRelationshipModel())
+      usersFriendships.push(userFriendship.toUserFriendshipModel())
     })
-    
 
     return usersFriendships
   }
