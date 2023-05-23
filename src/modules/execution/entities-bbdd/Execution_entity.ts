@@ -65,7 +65,10 @@ const ExecutionSchema = new Schema<
 
 ExecutionSchema.method(
   'toExecutionModel',
-  function toExecutionModel(): Execution {
+  async function toExecutionModel(): Promise<Execution> {
+    // Populate the Method to get the timers
+    await this.method.populate('blocks.timers')
+
     // Fill the user
     const user = new User({
       username: this.user.username,
@@ -86,9 +89,14 @@ ExecutionSchema.method(
       const timers: Timer[] = []
 
       block.timers.forEach((timer: any) => {
+        console.log(timer)
+
         timers.push(
           new Timer({
             id: timer._id,
+            name: timer.name,
+            time: timer.time,
+            countingType: timer.countingType,
           }),
         )
       })
