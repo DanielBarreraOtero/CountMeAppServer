@@ -11,8 +11,10 @@ export default class GetAll {
       .populate('user')
 
     for (const executionEntity of executionEntities) {
-      executions.push(executionEntity.toExecutionModel())
+      executions.push(await executionEntity.toExecutionModel())
     }
+
+    console.log(executions)
 
     return executions
   }

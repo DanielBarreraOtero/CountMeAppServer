@@ -10,7 +10,6 @@ import User from '../../modules/user/models/User_model'
 import GetByUser from '../../modules/execution/application/get-by-user'
 import finishActivityExecution from '../../modules/execution/application/finish.activity'
 import finishExecution from '../../modules/execution/application/finish.'
-import UserEntity from '../../modules/user/entities-bbdd/User_entity'
 import GetLastByUser from '../../modules/execution/application/get-last-by-user'
 
 export const getExecutions = async (req: Request, res: Response) => {
@@ -70,6 +69,7 @@ export const saveNewExecution = async (req: Request, res: Response) => {
     interruptions: execReq.interruptions ? execReq.interruptions : [],
     blockIndex: execReq.blockIndex,
     currentRep: execReq.currentRep,
+    timerIndex: execReq.timerIndex,
     activityFinished: execReq.activityFinished,
     user: (await new GetUserByName().execute(execReq.user.username)) as User,
   })

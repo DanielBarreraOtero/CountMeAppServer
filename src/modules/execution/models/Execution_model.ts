@@ -16,6 +16,7 @@ export default class Execution {
   readonly timerName: string
   readonly blockIndex: number
   readonly currentRep: number
+  readonly timerIndex: number
   readonly activityFinished: boolean
   readonly interruptions: {
     readonly name: string

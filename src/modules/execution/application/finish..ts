@@ -22,7 +22,7 @@ export default class finishExecution {
       path: 'timer',
     })
 
-    var execution = executionBD.toExecutionModel()
+    var execution = await executionBD.toExecutionModel()
 
     return execution
   }

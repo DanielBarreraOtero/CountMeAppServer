@@ -21,6 +21,7 @@ interface IExecution {
   timerName: string
   blockIndex: number
   currentRep: number
+  timerIndex: number
   activityFinished: boolean
   interruptions: {
     name: string
@@ -31,7 +32,7 @@ interface IExecution {
 }
 
 interface IExecutionMethods {
-  toExecutionModel(): Execution
+  toExecutionModel(): Promise<Execution>
 }
 
 type ExecutionModel = Model<IExecution, {}, IExecutionMethods>
@@ -52,6 +53,7 @@ const ExecutionSchema = new Schema<
   timerName: { type: String, required: true },
   blockIndex: { type: Number, required: true },
   currentRep: { type: Number, required: true },
+  timerIndex: { type: Number, required: true },
   activityFinished: { type: Boolean, required: true },
   interruptions: [
     {
@@ -80,6 +82,7 @@ ExecutionSchema.method(
       id: this.activity._id,
       name: this.activity.name,
       color: this.activity.color,
+      order: this.activity.order,
     })
 
     // Fill the method
@@ -89,8 +92,6 @@ ExecutionSchema.method(
       const timers: Timer[] = []
 
       block.timers.forEach((timer: any) => {
-        console.log(timer)
-
         timers.push(
           new Timer({
             id: timer._id,
@@ -138,6 +139,7 @@ ExecutionSchema.method(
       timerName: this.timerName,
       blockIndex: this.blockIndex,
       currentRep: this.currentRep,
+      timerIndex: this.timerIndex,
       activityFinished: this.activityFinished,
       interruptions: this.interruptions,
     })
@@ -145,7 +147,7 @@ ExecutionSchema.method(
 )
 
 const ExecutionEntity = mongoose.model<IExecution, ExecutionModel>(
-  'executions ',
+  'executions',
   ExecutionSchema,
 )
 

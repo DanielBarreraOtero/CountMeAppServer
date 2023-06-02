@@ -25,7 +25,7 @@ export default class finishActivityExecution {
       path: 'timer',
     })
 
-    var execution = executionBD.toExecutionModel()
+    var execution = await executionBD.toExecutionModel()
 
     return execution
   }

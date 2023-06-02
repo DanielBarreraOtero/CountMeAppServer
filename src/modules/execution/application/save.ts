@@ -17,6 +17,7 @@ export default class SaveExecution {
       user: execution.user.id,
       blockIndex: execution.blockIndex,
       currentRep: execution.currentRep,
+      timerIndex: execution.timerIndex,
       activityFinished: execution.activityFinished,
     })
 
@@ -37,7 +38,7 @@ export default class SaveExecution {
       path: 'timer',
     })
 
-    var execution = executionBD.toExecutionModel()
+    var execution = await executionBD.toExecutionModel()
 
     return execution
   }
