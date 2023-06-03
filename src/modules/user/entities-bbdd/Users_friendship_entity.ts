@@ -6,8 +6,8 @@ import UserEntity from './User_entity'
 SchemaTypeOptions
 
 interface IUserFriendship {
-  user1: { type: Types.ObjectId; required: true; unique: true }
-  user2: { type: Types.ObjectId; required: true; unique: true }
+  user1: { type: Types.ObjectId; required: true }
+  user2: { type: Types.ObjectId; required: true }
   states: Types.Array<{ state: Types.ObjectId; date: Schema.Types.Date }>
 }
 
@@ -15,19 +15,15 @@ interface IUserFriendshipMethods {
   toUserFriendshipModel(): UsersFriendship
 }
 
-type UserFriendshipModel = Model<
-  IUserFriendship,
-  {},
-  IUserFriendshipMethods
->
+type UserFriendshipModel = Model<IUserFriendship, {}, IUserFriendshipMethods>
 
 const userFriendshipSchema = new Schema<
   IUserFriendship,
   UserFriendshipModel,
   IUserFriendshipMethods
 >({
-  user1: { type: Schema.Types.ObjectId, ref: UserEntity, unique: true },
-  user2: { type: Schema.Types.ObjectId, ref: UserEntity, unique: true },
+  user1: { type: Schema.Types.ObjectId, ref: UserEntity },
+  user2: { type: Schema.Types.ObjectId, ref: UserEntity },
   states: [
     {
       type: {

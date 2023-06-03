@@ -4,7 +4,7 @@ import UserToken from '../models/UserToken_model'
 import UserEntity from './User_entity'
 
 interface IToken {
-  user: { type: Types.ObjectId; required: true, unique: true }
+  user: { type: Types.ObjectId; required: true }
   token: { type: String; required: true }
 }
 
