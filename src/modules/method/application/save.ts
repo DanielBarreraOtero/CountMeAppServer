@@ -38,14 +38,14 @@ export default class SaveMethod {
 
     methodEntity.isNew = method.id ? false : true
 
+    console.log(methodEntity)
+
     var methodBD = await methodEntity.save()
 
     await methodBD.populate('user')
     await methodBD.populate('blocks.timers')
 
-    console.log(methodBD)
-
-    // var method = methodBD.toMethodModel()
+    var method = methodBD.toMethodModel()
 
     return method
   }

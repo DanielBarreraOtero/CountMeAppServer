@@ -2,10 +2,8 @@ import MethodEntity from '../entities-bbdd/Method_entity'
 import Method from '../models/Method_model'
 
 export default class GetById {
-  async execute(id: string): Promise<Method[]> {
-    const methods: Method[] = []
-
-    const methodEntities = await MethodEntity.find({ _id: id })
+  async execute(id: string): Promise<Method> {
+    const methodEntity = await MethodEntity.findOne({ _id: id })
       .populate({
         path: 'user',
       })
@@ -13,10 +11,8 @@ export default class GetById {
         path: 'blocks.timers',
       })
 
-    methodEntities.forEach((method) => {
-      methods.push(method.toMethodModel())
-    })
+    const method = methodEntity.toMethodModel()
 
-    return methods
+    return method
   }
 }

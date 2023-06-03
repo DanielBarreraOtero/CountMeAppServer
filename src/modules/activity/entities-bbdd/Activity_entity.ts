@@ -38,9 +38,9 @@ ActivitySchema.method('toActivityModel', function toActivityModel(): Activity {
   })
 })
 
-const ActiviyEntity = mongoose.model<IActivity, ActivityModel>(
+const ActivityEntity = mongoose.model<IActivity, ActivityModel>(
   'activities',
   ActivitySchema,
 )
 
-export default ActiviyEntity
+export default ActivityEntity

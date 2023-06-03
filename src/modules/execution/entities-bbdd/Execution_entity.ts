@@ -4,7 +4,7 @@ import Activity from '../../activity/models/Activity_model'
 import User from '../../user/models/User_model'
 import Method from '../../method/models/Method_model'
 import Timer from '../../timers/models/Timer_model'
-import ActiviyEntity from '../../activity/entities-bbdd/Activity_entity'
+import ActivityEntity from '../../activity/entities-bbdd/Activity_entity'
 import MethodEntity from '../../method/entities-bbdd/Method_entity'
 import TimerEntity from '../../timers/entities-bbdd/Timer_entity'
 import UserEntity from '../../user/entities-bbdd/User_entity'
@@ -45,7 +45,7 @@ const ExecutionSchema = new Schema<
   startDate: { type: Date, required: true },
   finishDate: { type: Date, required: false },
   user: { type: Schema.Types.ObjectId, required: true, ref: UserEntity },
-  activity: { type: Schema.Types.ObjectId, required: true, ref: ActiviyEntity },
+  activity: { type: Schema.Types.ObjectId, required: true, ref: ActivityEntity },
   activityName: { type: String, required: true },
   method: { type: Schema.Types.ObjectId, required: true, ref: MethodEntity },
   methodName: { type: String, required: true },

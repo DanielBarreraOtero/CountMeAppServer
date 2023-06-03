@@ -27,10 +27,14 @@ interface IMethodMethods {
 type MethodModel = Model<IMethod, {}, IMethodMethods>
 
 const MethodSchema = new Schema<IMethod, MethodModel, IMethodMethods>({
-  name: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
   visibility: { type: Boolean, required: true },
   isDefault: { type: Boolean, required: true },
-  user: { type: Schema.Types.ObjectId, ref: UserEntity, required: true },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: UserEntity,
+    required: true,
+  },
   blocks: [
     {
       minReps: Number,

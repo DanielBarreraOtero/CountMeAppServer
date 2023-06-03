@@ -1,9 +1,11 @@
-import ActiviyEntity from '../entities-bbdd/Activity_entity'
+import ActivityEntity from '../entities-bbdd/Activity_entity'
 import Activity from '../models/Activity_model'
 
 export default class SaveActivity {
   async execute(activity: Activity): Promise<Activity> {
-    const activityEntity = new ActiviyEntity({
+    console.log(activity)
+
+    const activityEntity = new ActivityEntity({
       _id: activity.id ? activity.id : undefined,
       name: activity.name,
       color: activity.color,
