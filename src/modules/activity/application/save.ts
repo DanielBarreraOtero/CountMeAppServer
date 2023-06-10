@@ -3,8 +3,6 @@ import Activity from '../models/Activity_model'
 
 export default class SaveActivity {
   async execute(activity: Activity): Promise<Activity> {
-    console.log(activity)
-
     const activityEntity = new ActivityEntity({
       _id: activity.id ? activity.id : undefined,
       name: activity.name,

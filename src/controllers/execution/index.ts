@@ -41,13 +41,8 @@ export const getLastExecutionByUser = async (req: Request, res: Response) => {
     // Get Activities
     const execution = await new GetLastByUser().execute(user.id)
 
-    if (execution instanceof Execution) {
-      // Send response
-      res.status(200).json(execution)
-    } else {
-      // Can't find Execution
-      res.status(400).json({ error: execution.error + user.username })
-    }
+    // Send response
+    res.status(200).json(execution)
   } else {
     // Can't find User
     res.status(400).json({ error: user.error })

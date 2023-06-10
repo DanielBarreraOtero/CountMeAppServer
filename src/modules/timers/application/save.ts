@@ -24,8 +24,6 @@ export default class SaveTimer {
     await timerBD.populate('user')
     await timerBD.populate('countingType')
 
-    console.log(timerBD)
-
     var timer = timerBD.toTimerModel()
 
     return timer

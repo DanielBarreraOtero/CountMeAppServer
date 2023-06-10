@@ -20,8 +20,6 @@ export const getUser = async (req: Request, res: Response) => {
   // Get user
   const result = await new GetUser().execute(req.params.id)
 
-  console.log(result)
-
   // Send response
   if (result instanceof User) {
     res.status(200).json(result)

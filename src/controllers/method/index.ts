@@ -7,6 +7,9 @@ import Timer from '../../modules/timers/models/Timer_model'
 import GetUserByName from '../../modules/user/application/get-by-name'
 import GetByUser from '../../modules/method/application/get-by-user'
 import DeleteMethod from '../../modules/method/application/delete'
+import GetById from '../../modules/method/application/get-by-id'
+import GetLastByUser from '../../modules/execution/application/get-last-by-user'
+import Execution from '../../modules/execution/models/Execution_model'
 
 export const getMethods = async (
   req: Request,
@@ -124,19 +127,58 @@ export const saveExistingMethod = async (req: Request, res: Response) => {
     blocks,
   })
 
+  const execution = await new GetLastByUser().execute(method.user.id)
+
+  if (execution instanceof Execution && isInActiveActivity(method, execution)) {
+    res.status(400).json({
+      error: 'Method cannot be modified while its being used by an Activity.',
+    })
+
+    return
+  }
+
   const methodBD = await new SaveMethod().execute(method)
 
   res.status(200).json(methodBD)
 }
 
 export const deleteMethod = async (req: Request, res: Response) => {
-  const result = await new DeleteMethod().execute(req.params.id)
+  const method = await new GetById().execute(req.params.id)
+
+  if (!method) {
+    res
+      .status(400)
+      .send({ error: `Couldn't find any Method by the id: ${req.params.id}` })
+    return
+  }
+
+  const user = (await new GetUserByName().execute(method.user.username)) as User
+
+  const execution = await new GetLastByUser().execute(user.id)
+
+  if (execution instanceof Execution && isInActiveActivity(method, execution)) {
+    res.status(400).json({
+      error: 'Method cannot be deleted while its being used by an Activity.',
+    })
+
+    return
+  }
+
+  const result = await new DeleteMethod().execute(method.id)
 
   if (result.deletedCount > 0) {
     res.status(200).send()
   } else {
     res
       .status(400)
-      .send({ error: `Couldn't find any Method by the id: ${req.params.id}` })
+      .send({ error: `Couldn't delete Method with id: ${method.id}` })
   }
+}
+
+function isInActiveActivity(method: Method, execution: Execution) {
+  if (!execution.activityFinished) {
+    return execution.method.id.toString() === method.id
+  }
+
+  return false
 }

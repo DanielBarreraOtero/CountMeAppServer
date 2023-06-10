@@ -2,6 +2,8 @@
 // import UserEntity from '../entities-bbdd/User_entity'
 
 import GetById from '../../method/application/get-by-id'
+import GetUserByName from '../../user/application/get-by-name'
+import User from '../../user/models/User_model'
 import TimerEntity from '../entities-bbdd/Timer_entity'
 import Timer from '../models/Timer_model'
 
@@ -21,6 +23,12 @@ export default class GetAllForBlock {
       }
     }
 
+    const user = await new GetUserByName().execute(method.user.username)
+
+    if (!(user instanceof User)) {
+      return user
+    }
+
     method.blocks[blockIndex].timers.forEach((timer) => {
       ids.push(timer.id)
     })
@@ -29,6 +37,7 @@ export default class GetAllForBlock {
       _id: {
         $nin: ids,
       },
+      user: user.id,
     })
       .populate({
         path: 'user',

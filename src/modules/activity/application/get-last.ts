@@ -8,8 +8,6 @@ export default class GetLastByUser {
       .sort({ order: -1 })
       .populate('user')
 
-    console.log(activityEntity)
-
     activity = activityEntity.toActivityModel()
 
     return activity

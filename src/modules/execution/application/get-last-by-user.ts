@@ -2,7 +2,8 @@ import ExecutionEntity from '../entities-bbdd/Execution_entity'
 import Execution from '../models/Execution_model'
 
 export default class GetLastByUser {
-  async execute(id: string): Promise<Execution | { error: string }> {
+  async execute(id: string): Promise<Execution> {
+    var execution: Execution = undefined
     const executionEntity = await ExecutionEntity.findOne({
       user: id,
     })
@@ -13,10 +14,9 @@ export default class GetLastByUser {
       .populate('timer')
 
     if (executionEntity) {
-      const execution = executionEntity.toExecutionModel()
-      return execution
+      execution = await executionEntity.toExecutionModel()
     }
 
-    return { error: `Couldn't find any Execution with the username: ` }
+    return execution
   }
 }

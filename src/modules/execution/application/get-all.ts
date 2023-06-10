@@ -14,8 +14,6 @@ export default class GetAll {
       executions.push(await executionEntity.toExecutionModel())
     }
 
-    console.log(executions)
-
     return executions
   }
 }

@@ -5,8 +5,11 @@ import SaveActivity from '../../modules/activity/application/save'
 import User from '../../modules/user/models/User_model'
 import GetByUser from '../../modules/activity/application/get-by-user'
 import GetUserByName from '../../modules/user/application/get-by-name'
-import GetLastByUser from '../../modules/activity/application/get-last'
+import GetLastActivityByUser from '../../modules/activity/application/get-last'
+import GetLastExecutionByUser from '../../modules/execution/application/get-last-by-user'
 import DeleteActivity from '../../modules/activity/application/delete'
+import GetbyId from '../../modules/activity/application/get-by-id'
+import Execution from '../../modules/execution/models/Execution_model'
 
 export const getActivities = async (req: Request, res: Response) => {
   // Get Activities
@@ -35,7 +38,7 @@ export const getLastByUser = async (req: Request, res: Response) => {
 
   if (user instanceof User) {
     // Get Activity
-    const activity = await new GetLastByUser().execute(user.id)
+    const activity = await new GetLastActivityByUser().execute(user.id)
 
     // Send response
     res.status(200).json(activity)
@@ -62,15 +65,28 @@ export const saveNewActivity = async (req: Request, res: Response) => {
 
 export const saveExistingActivity = async (req: Request, res: Response) => {
   const activityReq = req.body.activity
+
+  const user = (await new GetUserByName().execute(
+    activityReq.user.username,
+  )) as User
+
   const activity = new Activity({
     id: activityReq.id,
     name: activityReq.name,
     color: activityReq.color,
     order: activityReq.order,
-    user: (await new GetUserByName().execute(
-      activityReq.user.username,
-    )) as User,
+    user,
   })
+
+  const execution = await new GetLastExecutionByUser().execute(user.id)
+
+  if (execution instanceof Execution && !execution.activityFinished) {
+    res.status(400).json({
+      error: 'Activity cannot be modified while its being executed.',
+    })
+
+    return
+  }
 
   const activitiesBD = await new SaveActivity().execute(activity)
 
@@ -78,13 +94,38 @@ export const saveExistingActivity = async (req: Request, res: Response) => {
 }
 
 export const deleteActivity = async (req: Request, res: Response) => {
-  const result = await new DeleteActivity().execute(req.params.id)
+  const activity = await new GetbyId().execute(req.params.id)
+
+  if (!activity) {
+    res
+      .status(400)
+      .send({ error: `Couldn't find any Activity by the id: ${req.params.id}` })
+    return
+  }
+
+  const user = (await new GetUserByName().execute(
+    activity.user.username,
+  )) as User
+
+  const execution = await new GetLastExecutionByUser().execute(user.id)
+
+  console.log(execution)
+
+  if (execution instanceof Execution && !execution.activityFinished) {
+    res.status(400).json({
+      error: 'Activity cannot be deleted while its being executed.',
+    })
+
+    return
+  }
+
+  const result = await new DeleteActivity().execute(activity.id)
 
   if (result.deletedCount > 0) {
     res.status(200).send()
   } else {
     res
       .status(400)
-      .send({ error: `Couldn't find any Activity by the id: ${req.params.id}` })
+      .send({ error: `Couldn't delete Activity with id: ${activity.id}` })
   }
 }

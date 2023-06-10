@@ -45,7 +45,11 @@ const ExecutionSchema = new Schema<
   startDate: { type: Date, required: true },
   finishDate: { type: Date, required: false },
   user: { type: Schema.Types.ObjectId, required: true, ref: UserEntity },
-  activity: { type: Schema.Types.ObjectId, required: true, ref: ActivityEntity },
+  activity: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: ActivityEntity,
+  },
   activityName: { type: String, required: true },
   method: { type: Schema.Types.ObjectId, required: true, ref: MethodEntity },
   methodName: { type: String, required: true },
@@ -69,7 +73,9 @@ ExecutionSchema.method(
   'toExecutionModel',
   async function toExecutionModel(): Promise<Execution> {
     // Populate the Method to get the timers
-    await this.method.populate('blocks.timers')
+    var activity: Activity
+    var method: Method
+    var timer: Timer
 
     // Fill the user
     const user = new User({
@@ -78,53 +84,60 @@ ExecutionSchema.method(
     })
 
     // Fill the Activity
-    const activity = new Activity({
-      id: this.activity._id,
-      name: this.activity.name,
-      color: this.activity.color,
-      order: this.activity.order,
-    })
+    if (this.activity) {
+      activity = new Activity({
+        id: this.activity._id,
+        name: this.activity.name,
+        color: this.activity.color,
+        order: this.activity.order,
+      })
+    }
 
     // Fill the method
-    const blocks: any[] = []
+    if (this.method) {
+      await this.method.populate('blocks.timers')
 
-    this.method.blocks.forEach((block: any) => {
-      const timers: Timer[] = []
+      const blocks: any[] = []
 
-      block.timers.forEach((timer: any) => {
-        timers.push(
-          new Timer({
-            id: timer._id,
-            name: timer.name,
-            time: timer.time,
-            countingType: timer.countingType,
-          }),
-        )
+      this.method.blocks.forEach((block: any) => {
+        const timers: Timer[] = []
+
+        block.timers.forEach((timer: any) => {
+          timers.push(
+            new Timer({
+              id: timer._id,
+              name: timer.name,
+              time: timer.time,
+              countingType: timer.countingType,
+            }),
+          )
+        })
+
+        blocks.push({
+          minReps: block.minReps,
+          maxReps: block.maxReps,
+          timers,
+        })
       })
 
-      blocks.push({
-        minReps: block.minReps,
-        maxReps: block.maxReps,
-        timers,
+      method = new Method({
+        id: this.method._id,
+        name: this.method.name,
+        visibility: this.method.visibility,
+        isDefault: this.method.isDefault,
+        blocks,
       })
-    })
-
-    const method = new Method({
-      id: this.method._id,
-      name: this.method.name,
-      visibility: this.method.visibility,
-      isDefault: this.method.isDefault,
-      blocks,
-    })
+    }
 
     // Fill the Timer
-
-    const timer = new Timer({
-      id: this.timer._id,
-      name: this.timer.name,
-      time: this.timer.time,
-      countingType: this.timer.countingType,
-    })
+    if (this.timer) {
+      timer = new Timer({
+        id: this.timer._id,
+        name: this.timer.name,
+        time: this.timer.time,
+        countingType: this.timer.countingType,
+      })
+    }
 
     return new Execution({
       id: this._id.toString(),

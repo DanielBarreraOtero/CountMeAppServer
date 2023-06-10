@@ -38,8 +38,6 @@ export default class SaveMethod {
 
     methodEntity.isNew = method.id ? false : true
 
-    console.log(methodEntity)
-
     var methodBD = await methodEntity.save()
 
     await methodBD.populate('user')

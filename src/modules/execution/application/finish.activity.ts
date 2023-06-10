@@ -5,8 +5,6 @@ export default class finishActivityExecution {
   async execute(execution: Execution): Promise<Execution> {
     const executionEntity = await ExecutionEntity.findOne({ _id: execution.id })
 
-    console.log(executionEntity);
-
     executionEntity.finishDate = execution.finishDate
     executionEntity.activityFinished = true
 

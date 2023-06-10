@@ -6,8 +6,6 @@ export default class GetAll {
     const activities: Activity[] = []
     const activityEntities = await ActivityEntity.find({}).populate('user')
 
-    console.log(activityEntities)
-
     activityEntities.forEach(activityEntity => {
         activities.push(activityEntity.toActivityModel())
     });
