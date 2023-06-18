@@ -1,10 +1,16 @@
 import express from 'express'
 const router = express.Router()
-import { getAcceptedFriendships, getFriendships, getPendingFriendships } from '../../../controllers/friendships'
-import { closeConn, initConn } from '../../../utils/mongo-connector'
+import {
+  getAcceptedFriendships,
+  getFriendships,
+  getPendingFriendships,
+} from '../../../controllers/friendships'
+import AuthChecker from '../../../utils/auth-checker'
 
-router.get('/', initConn, getFriendships, closeConn)
-router.get('/Accepted/:id', initConn, getAcceptedFriendships, closeConn)
-router.get('/Pending/:id', initConn, getPendingFriendships, closeConn)
+const authChekcer = new AuthChecker()
+
+router.get('/', authChekcer.authAdmin(), getFriendships)
+router.get('/Accepted/:id', authChekcer.authUser(), getAcceptedFriendships)
+router.get('/Pending/:id', authChekcer.authUser(), getPendingFriendships)
 
 export default router

@@ -8,13 +8,15 @@ import {
   saveExistingTimer,
   saveNewTimer,
 } from '../../../controllers/timer'
-import { closeConn, initConn } from '../../../utils/mongo-connector'
+import AuthChecker from '../../../utils/auth-checker'
 
-router.get('/', initConn, getTimers, closeConn)
-router.get('/user/:username', initConn, getTimersByUser, closeConn)
-router.get('/:methodId/:blockIndex', initConn, getTimersForBlock, closeConn)
-router.post('/', initConn, saveNewTimer, closeConn)
-router.put('/', initConn, saveExistingTimer, closeConn)
-router.delete('/:id', initConn, deleteTimer, closeConn)
+const authChekcer = new AuthChecker()
+
+router.get('/', authChekcer.authAdmin(), getTimers)
+router.get('/user/:username', authChekcer.authUser(), getTimersByUser)
+router.get('/:methodId/:blockIndex', authChekcer.authUser(), getTimersForBlock)
+router.post('/', authChekcer.authUser(), saveNewTimer)
+router.put('/', authChekcer.authUser(), saveExistingTimer)
+router.delete('/:id', authChekcer.authUser(), deleteTimer)
 
 export default router

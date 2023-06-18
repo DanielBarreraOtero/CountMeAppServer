@@ -1,6 +1,5 @@
 import express from 'express'
 const router = express.Router()
-import { closeConn, initConn } from '../../../utils/mongo-connector'
 import {
   deleteMethod,
   getMethods,
@@ -8,11 +7,14 @@ import {
   saveExistingMethod,
   saveNewMethod,
 } from '../../../controllers/method'
+import AuthChecker from '../../../utils/auth-checker'
 
-router.get('/', initConn, getMethods, closeConn)
-router.get('/user/:username', initConn, getMethodsByUser, closeConn)
-router.post('/', initConn, saveNewMethod, closeConn)
-router.put('/', initConn, saveExistingMethod, closeConn)
-router.delete('/:id', initConn, deleteMethod, closeConn)
+const authChekcer = new AuthChecker()
+
+router.get('/', authChekcer.authAdmin(), getMethods)
+router.get('/user/:username', authChekcer.authUser(), getMethodsByUser)
+router.post('/', authChekcer.authUser(), saveNewMethod)
+router.put('/', authChekcer.authUser(), saveExistingMethod)
+router.delete('/:id', authChekcer.authUser(), deleteMethod)
 
 export default router

@@ -5,7 +5,7 @@ import RoleEntity from './Role_entity'
 interface IUser {
   username: { type: string; required: true; unique: true }
   email: { type: string; required: true }
-  password: string
+  password: { type: string; required: true }
   roles: Types.Array<Types.ObjectId>
 }
 
@@ -18,7 +18,7 @@ type UserModel = Model<IUser, {}, IUserMethods>
 const userSchema = new Schema<IUser, UserModel, IUserMethods>({
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true },
-  password: String,
+  password: { type: String, required: true },
   roles: [{ type: Schema.Types.ObjectId, ref: RoleEntity }],
 })
 

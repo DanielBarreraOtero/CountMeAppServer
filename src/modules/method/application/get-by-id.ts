@@ -11,7 +11,7 @@ export default class GetById {
         path: 'blocks.timers',
       })
 
-    const method = methodEntity.toMethodModel()
+    const method = await methodEntity.toMethodModel()
 
     return method
   }

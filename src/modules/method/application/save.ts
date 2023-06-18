@@ -43,7 +43,7 @@ export default class SaveMethod {
     await methodBD.populate('user')
     await methodBD.populate('blocks.timers')
 
-    var method = methodBD.toMethodModel()
+    var method = await methodBD.toMethodModel()
 
     return method
   }

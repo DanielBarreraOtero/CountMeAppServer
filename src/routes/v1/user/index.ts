@@ -1,6 +1,5 @@
 import express from 'express'
 const router = express.Router()
-import { closeConn, initConn } from '../../../utils/mongo-connector'
 
 import {
   deleteUser,
@@ -9,14 +8,14 @@ import {
   saveExistingUser,
   saveNewUser,
 } from '../../../controllers/user'
+import AuthChecker from '../../../utils/auth-checker'
 
-router.get('/', initConn, getUsers, closeConn)
+const authChekcer = new AuthChecker()
 
-router.get('/:id', initConn, getUser, closeConn)
-
-router.post('/', initConn, saveNewUser, closeConn)
-router.put('/', initConn, saveExistingUser, closeConn)
-
-router.delete('/', initConn, deleteUser, closeConn)
+router.get('/', authChekcer.authAdmin(), getUsers)
+router.get('/:id', authChekcer.authUser(), getUser)
+router.post('/', saveNewUser)
+router.put('/', authChekcer.authUser(), saveExistingUser)
+router.delete('/', authChekcer.authUser(), deleteUser)
 
 export default router

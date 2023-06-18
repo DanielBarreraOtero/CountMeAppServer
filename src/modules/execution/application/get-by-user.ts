@@ -10,7 +10,7 @@ export default class GetByUser {
       .populate('user')
       .populate('activity')
       .populate('method')
-      .populate('timer')
+      // .populate('timer')
 
     for (const executionEntity of executionEntities) {
       executions.push(await executionEntity.toExecutionModel())

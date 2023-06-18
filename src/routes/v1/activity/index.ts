@@ -8,13 +8,28 @@ import {
   saveExistingActivity,
   saveNewActivity,
 } from '../../../controllers/activity'
-import { closeConn, initConn } from '../../../utils/mongo-connector'
 
-router.get('/', initConn, getActivities, closeConn)
-router.get('/user/:username', initConn, getActivitiesByUser, closeConn)
-router.get('/last/user/:username', initConn, getLastByUser, closeConn)
-router.post('/', initConn, saveNewActivity, closeConn)
-router.put('/', initConn, saveExistingActivity, closeConn)
-router.delete('/:id', initConn, deleteActivity, closeConn)
+import AuthChekcer from '../../../utils/auth-checker'
+import Validator from '../../../utils/validator'
+
+const authChekcer = new AuthChekcer()
+const validator = new Validator(authChekcer)
+
+router.get('/', authChekcer.authAdmin(), getActivities)
+router.get('/user/:username', authChekcer.authUser(), getActivitiesByUser)
+router.get('/last/user/:username', authChekcer.authUser(), getLastByUser)
+router.post(
+  '/',
+  authChekcer.authUser(),
+  validator.activityPost(),
+  saveNewActivity,
+)
+router.put(
+  '/',
+  authChekcer.authUser(),
+  validator.activityPut(),
+  saveExistingActivity,
+)
+router.delete('/:id', authChekcer.authUser(), deleteActivity)
 
 export default router

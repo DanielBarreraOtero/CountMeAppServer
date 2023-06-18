@@ -11,7 +11,7 @@ export default class SaveExecution {
       activityName: execution.activityName,
       method: execution.method.id,
       methodName: execution.methodName,
-      timer: execution.timer.id,
+      timer: execution.timer,
       timerName: execution.timerName,
       interruptions: execution.interruptions,
       user: execution.user.id,
@@ -34,9 +34,9 @@ export default class SaveExecution {
     await executionBD.populate({
       path: 'method',
     })
-    await executionBD.populate({
-      path: 'timer',
-    })
+    // await executionBD.populate({
+    //   path: 'timer',
+    // })
 
     var execution = await executionBD.toExecutionModel()
 

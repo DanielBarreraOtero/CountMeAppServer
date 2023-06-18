@@ -13,9 +13,9 @@ export default class GetAll {
         path: 'blocks.timers',
       })
 
-    methodEntities.forEach((method) => {
-      methods.push(method.toMethodModel())
-    })
+      for (const method of methodEntities) {
+        methods.push(await method.toMethodModel())
+      }
 
     return methods
   }

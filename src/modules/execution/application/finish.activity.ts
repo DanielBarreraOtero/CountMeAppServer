@@ -19,9 +19,9 @@ export default class finishActivityExecution {
     await executionBD.populate({
       path: 'method',
     })
-    await executionBD.populate({
-      path: 'timer',
-    })
+    // await executionBD.populate({
+    //   path: 'timer',
+    // })
 
     var execution = await executionBD.toExecutionModel()
 

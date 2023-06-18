@@ -10,6 +10,7 @@ import GetLastExecutionByUser from '../../modules/execution/application/get-last
 import DeleteActivity from '../../modules/activity/application/delete'
 import GetbyId from '../../modules/activity/application/get-by-id'
 import Execution from '../../modules/execution/models/Execution_model'
+import { Error, MongooseError } from 'mongoose'
 
 export const getActivities = async (req: Request, res: Response) => {
   // Get Activities
@@ -58,9 +59,20 @@ export const saveNewActivity = async (req: Request, res: Response) => {
     )) as User,
   })
 
-  const activitiesBD = await new SaveActivity().execute(activity)
+  try {
+    const activitiesBD = await new SaveActivity().execute(activity)
+    res.status(201).json(activitiesBD)
+  } catch (error: any) {
+    console.log(error.message)
 
-  res.status(201).json(activitiesBD)
+    if ((error.message as string).includes('E11000')) {
+      res.status(400).json({
+        error: `The activity with name '${activity.name}', already exists for user '${activity.user.username}'`,
+      })
+    } else {
+      res.status(500).send()
+    }
+  }
 }
 
 export const saveExistingActivity = async (req: Request, res: Response) => {
@@ -78,19 +90,42 @@ export const saveExistingActivity = async (req: Request, res: Response) => {
     user,
   })
 
-  const execution = await new GetLastExecutionByUser().execute(user.id)
+  try {
+    const execution = await new GetLastExecutionByUser().execute(user.id)
 
-  if (execution instanceof Execution && !execution.activityFinished) {
-    res.status(400).json({
-      error: 'Activity cannot be modified while its being executed.',
-    })
+    if (
+      execution instanceof Execution &&
+      execution.activity &&
+      execution.activity.id === activity.id &&
+      !execution.activityFinished
+    ) {
+      res.status(400).json({
+        error: 'Activity cannot be modified while its being executed.',
+      })
 
-    return
+      return
+    }
+
+    const activitiesBD = await new SaveActivity().execute(activity)
+
+    res.status(200).json(activitiesBD)
+  } catch (error: any) {
+    console.log(error.message)
+
+    if ((error.message as string).includes('No document found')) {
+      res.status(400).json({
+        error: `Activity '${activity.id}' not found.`,
+      })
+      return
+    } else if (
+      (error.message as string).includes('activities validation failed')
+    ) {
+      res.status(400).json({
+        error: `Id '${activity.id}' is not well formated.`,
+      })
+      return
+    }
   }
-
-  const activitiesBD = await new SaveActivity().execute(activity)
-
-  res.status(200).json(activitiesBD)
 }
 
 export const deleteActivity = async (req: Request, res: Response) => {

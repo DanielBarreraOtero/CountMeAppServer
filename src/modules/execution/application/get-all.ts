@@ -7,7 +7,7 @@ export default class GetAll {
     const executionEntities = await ExecutionEntity.find({})
       .populate('activity')
       .populate('method')
-      .populate('timer')
+      // .populate('timer')
       .populate('user')
 
     for (const executionEntity of executionEntities) {

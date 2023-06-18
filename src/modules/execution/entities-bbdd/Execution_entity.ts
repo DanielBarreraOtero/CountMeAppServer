@@ -8,6 +8,7 @@ import ActivityEntity from '../../activity/entities-bbdd/Activity_entity'
 import MethodEntity from '../../method/entities-bbdd/Method_entity'
 import TimerEntity from '../../timers/entities-bbdd/Timer_entity'
 import UserEntity from '../../user/entities-bbdd/User_entity'
+import GetOneById from '../../timers/application/get-countingType'
 
 interface IExecution {
   startDate: Date
@@ -17,7 +18,7 @@ interface IExecution {
   activityName: string
   method: Types.ObjectId
   methodName: string
-  timer: Types.ObjectId
+  timer: Timer
   timerName: string
   blockIndex: number
   currentRep: number
@@ -53,7 +54,7 @@ const ExecutionSchema = new Schema<
   activityName: { type: String, required: true },
   method: { type: Schema.Types.ObjectId, required: true, ref: MethodEntity },
   methodName: { type: String, required: true },
-  timer: { type: Schema.Types.ObjectId, required: true, ref: TimerEntity },
+  timer: { type: Object, required: true, ref: TimerEntity },
   timerName: { type: String, required: true },
   blockIndex: { type: Number, required: true },
   currentRep: { type: Number, required: true },
@@ -99,26 +100,28 @@ ExecutionSchema.method(
 
       const blocks: any[] = []
 
-      this.method.blocks.forEach((block: any) => {
+      for (const block of this.method.blocks) {
         const timers: Timer[] = []
 
-        block.timers.forEach((timer: any) => {
+        for (const timer of block.timers) {
+          let countingType = await new GetOneById().execute(timer.countingType)
+
           timers.push(
             new Timer({
               id: timer._id,
               name: timer.name,
               time: timer.time,
-              countingType: timer.countingType,
+              countingType,
             }),
           )
-        })
+        }
 
         blocks.push({
           minReps: block.minReps,
           maxReps: block.maxReps,
           timers,
         })
-      })
+      }
 
       method = new Method({
         id: this.method._id,
@@ -131,8 +134,10 @@ ExecutionSchema.method(
 
     // Fill the Timer
     if (this.timer) {
+      // let countingType = await new GetOneById().execute(this.timer.countingType)
+
       timer = new Timer({
-        id: this.timer._id,
+        id: this.timer.id,
         name: this.timer.name,
         time: this.timer.time,
         countingType: this.timer.countingType,

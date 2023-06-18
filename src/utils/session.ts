@@ -4,14 +4,21 @@ import User from '../modules/user/models/User_model'
 import { compareSync } from 'bcryptjs'
 import SaveUserToken from '../modules/user/application/tokens/save'
 import UserToken from '../modules/user/models/UserToken_model'
+import Parameters from './parameters'
 
 export default class Session {
+  private parameters: Parameters = new Parameters()
+
   public async generateToken(user: User): Promise<UserToken> {
     // Create Token based on id
-    const token = jwt.sign({ id: user.id }, 'tumadretieneunapolla', {
+    const token = jwt.sign({ id: user.id }, this.parameters.token.key, {
       algorithm: 'HS256',
       expiresIn: '30d',
     })
+    // const token = jwt.sign({ id: user.id }, 'tumadretieneunapolla', {
+    //   algorithm: 'HS256',
+    //   expiresIn: '30d',
+    // })
 
     const userTokenEntity = await new SaveUserToken().execute(
       new UserToken({ user, token }),
@@ -31,7 +38,10 @@ export default class Session {
     })
 
     // If found and password is correct
-    if (userEntity && compareSync(password, userEntity.password)) {
+    if (
+      userEntity &&
+      compareSync(password, userEntity.password as unknown as string)
+    ) {
       // Generates a new token, and saves it in the database
       var userToken = await this.generateToken(userEntity.toUserModel())
 
@@ -48,7 +58,11 @@ export default class Session {
     console.log('login de token')
 
     try {
-      var { id } = jwt.verify(token, 'tumadretieneunapolla') as jwt.JwtPayload
+      var { id } = jwt.verify(
+        token,
+        this.parameters.token.key,
+      ) as jwt.JwtPayload
+      // var { id } = jwt.verify(token, 'tumadretieneunapolla') as jwt.JwtPayload
       var userEntity = await UserEntity.findOne({
         _id: id,
       }).populate({ path: 'roles' })

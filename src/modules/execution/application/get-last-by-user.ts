@@ -11,7 +11,7 @@ export default class GetLastByUser {
       .populate('user')
       .populate('activity')
       .populate('method')
-      .populate('timer')
+      // .populate('timer')
 
     if (executionEntity) {
       execution = await executionEntity.toExecutionModel()

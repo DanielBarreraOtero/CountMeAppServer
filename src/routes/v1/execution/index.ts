@@ -7,14 +7,26 @@ import {
   getExecutions,
   saveNewExecution,
   getLastExecutionByUser,
+  getExecutionsByUserFormatted,
 } from '../../../controllers/execution'
-import { closeConn, initConn } from '../../../utils/mongo-connector'
+import AuthChecker from '../../../utils/auth-checker'
 
-router.get('/', initConn, getExecutions, closeConn)
-router.get('/user/:username', initConn, getExecutionsByUser, closeConn)
-router.get('/last/user/:username', initConn, getLastExecutionByUser, closeConn)
-router.post('/', initConn, saveNewExecution, closeConn)
-router.put('/endActivity', initConn, endActivityExecution, closeConn)
-router.put('/end', initConn, endExecution, closeConn)
+const authChekcer = new AuthChecker()
+
+router.get('/', authChekcer.authAdmin(), getExecutions)
+router.get('/user/:username', authChekcer.authUser(), getExecutionsByUser)
+router.get(
+  '/format/user/:username',
+  authChekcer.authUser(),
+  getExecutionsByUserFormatted,
+)
+router.get(
+  '/last/user/:username',
+  authChekcer.authUser(),
+  getLastExecutionByUser,
+)
+router.post('/', authChekcer.authUser(), saveNewExecution)
+router.put('/endActivity', authChekcer.authUser(), endActivityExecution)
+router.put('/end', authChekcer.authUser(), endExecution)
 
 export default router

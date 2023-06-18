@@ -5,6 +5,7 @@ import { processClose, processError } from './utils/process-manager'
 
 import setRoutes from './routes'
 import setMiddlewares from './middlewares'
+import { initConn } from './utils/mongo-connector'
 
 async function init() {
   // Variables
@@ -27,6 +28,9 @@ async function init() {
 
     // Routes
     setRoutes(app)
+
+    // DataBase Connection
+    await initConn()
 
     // Server
     app.listen(parameters.server.port, parameters.server.host, async () => {

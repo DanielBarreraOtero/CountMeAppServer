@@ -4,6 +4,7 @@ import Method from '../models/Method_model'
 import Timer from '../../timers/models/Timer_model'
 import User from '../../user/models/User_model'
 import UserEntity from '../../user/entities-bbdd/User_entity'
+import GetOneById from '../../timers/application/get-countingType'
 
 interface IMethod {
   name: { type: string; required: true; unique: true }
@@ -21,7 +22,7 @@ interface IMethod {
 }
 
 interface IMethodMethods {
-  toMethodModel(): Method
+  toMethodModel(): Promise<Method>
 }
 
 type MethodModel = Model<IMethod, {}, IMethodMethods>
@@ -49,42 +50,47 @@ const MethodSchema = new Schema<IMethod, MethodModel, IMethodMethods>({
   ],
 })
 
-MethodSchema.method('toMethodModel', function toMethodModel(): Method {
-  const blocks: any[] = []
+MethodSchema.method(
+  'toMethodModel',
+  async function toMethodModel(): Promise<Method> {
+    const blocks: any[] = []
 
-  this.blocks.forEach((block: any) => {
-    const timers: Timer[] = []
+    for (const block of this.blocks) {
+      const timers: Timer[] = []
 
-    block.timers.forEach((timer: any) => {
-      timers.push(
-        new Timer({
-          id: timer._id,
-          name: timer.name,
-          time: timer.time,
-          countingType: timer.countingType.name,
-        }),
-      )
+      for (const timer of block.timers) {
+        let countingType = await new GetOneById().execute(timer.countingType)
+
+        timers.push(
+          new Timer({
+            id: timer._id,
+            name: timer.name,
+            time: timer.time,
+            countingType,
+          }),
+        )
+      }
+
+      blocks.push({
+        minReps: block.minReps,
+        maxReps: block.maxReps,
+        timers,
+      })
+    }
+
+    return new Method({
+      id: this._id.toString(),
+      name: this.name,
+      visibility: this.visibility,
+      isDefault: this.isDefault,
+      blocks,
+      user: new User({
+        username: this.user.username,
+        email: this.user.email,
+      }),
     })
-
-    blocks.push({
-      minReps: block.minReps,
-      maxReps: block.maxReps,
-      timers,
-    })
-  })
-
-  return new Method({
-    id: this._id.toString(),
-    name: this.name,
-    visibility: this.visibility,
-    isDefault: this.isDefault,
-    blocks,
-    user: new User({
-      username: this.user.username,
-      email: this.user.email,
-    }),
-  })
-})
+  },
+)
 
 const MethodEntity = mongoose.model<IMethod, MethodModel>(
   'methods',

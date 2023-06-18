@@ -13,7 +13,7 @@ export default class SaveUser {
     const userEntity = new UserEntity({
       username: user.username,
       email: user.email,
-      password: hashSync(user.password),
+      password: user.password ? hashSync(user.password) : null,
       _id: user.id ? user.id : undefined,
       roles: rolesBD,
     })
@@ -28,8 +28,6 @@ export default class SaveUser {
 
     userBD.password = undefined
 
-    var user = userBD.toUserModel()
-
-    return user
+    return userBD.toUserModel()
   }
 }
