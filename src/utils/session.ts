@@ -15,10 +15,6 @@ export default class Session {
       algorithm: 'HS256',
       expiresIn: '30d',
     })
-    // const token = jwt.sign({ id: user.id }, 'tumadretieneunapolla', {
-    //   algorithm: 'HS256',
-    //   expiresIn: '30d',
-    // })
 
     const userTokenEntity = await new SaveUserToken().execute(
       new UserToken({ user, token }),
@@ -62,7 +58,6 @@ export default class Session {
         token,
         this.parameters.token.key,
       ) as jwt.JwtPayload
-      // var { id } = jwt.verify(token, 'tumadretieneunapolla') as jwt.JwtPayload
       var userEntity = await UserEntity.findOne({
         _id: id,
       }).populate({ path: 'roles' })

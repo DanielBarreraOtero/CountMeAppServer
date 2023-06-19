@@ -12,9 +12,6 @@ export const initConn = async () => {
   try {
     logger.info('Starting Connection')
 
-    // await mongoose.connect(
-    //   'mongodb+srv://root:root@cluster0.w7tn7ij.mongodb.net/CountMeApp?retryWrites=true&w=majority',
-    // )
     await mongoose.connect(parameters.db.url)
 
     logger.info('Connection started sucessfully')
